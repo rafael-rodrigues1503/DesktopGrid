@@ -10,6 +10,7 @@ class DesktopGrid:
         self.root.attributes("-fullscreen", True)
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
+        self.root.bind('<KeyPress>', lambda e: self.root.destroy() if e.char.lower() == 'q' else None)
 
         self.width = self.root.winfo_screenwidth()
         self.height = self.root.winfo_screenheight()
@@ -56,7 +57,7 @@ class DesktopGrid:
 
     def _create_tools_menu(self):
 
-        self.tools_menu = Frame(self.canvas, borderwidth=2, relief='groove', background='gray85')
+        self.tools_menu = Frame(self.canvas, borderwidth=2, relief='groove', background='#F5F6F7')
         self.tools_menu.grid(padx=5, pady=5)
 
         self.icons = [
@@ -67,7 +68,7 @@ class DesktopGrid:
             PhotoImage(file='icons\Line.png').subsample(2, 2),
             PhotoImage(file='icons\Text.png').subsample(2, 2)
         ]
-        self.tools = [Tool(lambda _: 1, self.tools_menu, image=i, background='gray85', activebackground='#9999ff', borderwidth=0) for i in self.icons]
+        self.tools = [Tool(lambda _: 1, self.tools_menu, image=i, background='#F5F6F7', activebackground='#C9E0F7', borderwidth=0) for i in self.icons]
 
         self.tool_activated = False
         self.selected_tool = False
@@ -85,26 +86,28 @@ class DesktopGrid:
         match event.type:
 
             case EventType.Enter:
-                event.widget.config(background="#9999ff")
+                if event.widget != self.selected_tool:
+                    event.widget.config(background="#E8EFF7")
 
             case EventType.Leave:
                 if event.widget != self.selected_tool:
-                    event.widget.config(background='gray85')
+                    event.widget.config(background='#F5F6F7')
 
             case EventType.ButtonRelease:
 
                 if self.tool_activated:
-                    self.selected_tool.config(background='gray85')
+                    self.selected_tool.config(background='#F5F6F7')
 
                     if self.selected_tool == event.widget:
                         self.tool_activated = False
+                        self.selected_tool = False
 
                     else:
-                        event.widget.config(background="#9999ff")
+                        event.widget.config(background="#C9E0F7")
                         self.selected_tool = event.widget
 
                 else:
-                    event.widget.config(background="#9999ff")
+                    event.widget.config(background="#C9E0F7")
             
                     self.tool_activated = True
                     self.selected_tool = event.widget
